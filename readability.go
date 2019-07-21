@@ -45,7 +45,14 @@ func FromURL(pageURL string, timeout time.Duration) (Article, error) {
 
 	// Fetch page from URL
 	client := &http.Client{Timeout: timeout}
-	resp, err := client.Get(pageURL)
+	req, err := http.NewRequest("GET", pageURL, nil)
+	if err != nil {
+		return Article{}, fmt.Errorf("failed to request page: %v", err)
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0 Safari/605.1.15")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return Article{}, fmt.Errorf("failed to fetch the page: %v", err)
 	}
